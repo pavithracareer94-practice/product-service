@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: product-service
+
+server:
+  port: 8081
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0  # Traces 100% of requests locally (use 0.1 in high-traffic production)
+  otlp:
+    tracing:
+      endpoint: http://localhost:4318/v1/traces
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+  file:
+    name: D:/PAVITHRA_CAREER/PRJT/logs/${spring.application.name}.log
+  structured:
+    format:
+      file: ecs
+      console: ecs
