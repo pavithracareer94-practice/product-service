@@ -1,0 +1,40 @@
+name: Product Service CI Pipeline
+
+# Trigger automatically whenever code is pushed or a Pull Request is opened on main
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest   # GitHub gives you a free Linux server in the cloud
+
+    steps:
+      # Step 1: Download your code onto the runner
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Install Java 21 (change to 17 if using Java 17)
+      - name: Set up JDK 27
+        uses: actions/setup-java@v4
+        with:
+          java-version: '27'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      # Step 3: Run unit & integration tests
+      - name: Run Maven Tests
+        run: mvn test
+
+      # Step 4: Package the executable JAR file
+      - name: Build JAR Package
+        run: mvn package -DskipTests
+
+      # Step 5: Save the built JAR so it can be downloaded or deployed
+      - name: Upload JAR Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: product-service-jar
+          path: target/*.jar
